@@ -2,7 +2,7 @@
   <div class="main-container">
     <div class="header">
       <h2>Medium<sup>mini</sup></h2>
-      <el-button round size="large">Get Started</el-button>
+      <el-button round size="large" @click="openAuthModal()">Get Started</el-button>
     </div>
     <el-divider />
     <div class="content">
@@ -12,7 +12,11 @@
           stories & ideas
         </h3>
         <h4>A place to read, write, and deepen your understanding</h4>
-        <el-button round size="extralarge" style="font-size: 20px; padding: 1.5rem"
+        <el-button
+          round
+          size="large"
+          style="font-size: 20px; padding: 1.5rem"
+          @click="openAuthModal()"
           >Start Reading</el-button
         >
       </div>
@@ -30,14 +34,26 @@
       </ul>
     </div>
   </div>
+
+  <AuthModal v-model="isAuthModalVisible" />
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+
+import AuthModal from '@/components/AuthModal.vue'
+
+const isAuthModalVisible = ref(false)
+
+const openAuthModal = () => {
+  isAuthModalVisible.value = true
+}
+</script>
 
 <style scoped>
 .main-container {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   background-color: rgb(253, 249, 243);
   display: flex;
   flex-direction: column;
@@ -78,7 +94,7 @@
 
 .left-content {
   width: 100%;
-  height: 100%;
+  height: auto;
   padding-inline: 1rem;
   display: flex;
   flex-direction: column;
@@ -91,6 +107,11 @@
 .left-content h3 {
   font-size: 80px;
   font-weight: normal;
+  margin-top: 1rem;
+}
+
+.left-content button {
+  margin-bottom: 1rem;
 }
 
 .right-content {
@@ -100,6 +121,7 @@
 .footer {
   width: 100%;
   max-width: 1281px;
+  background-color: black;
 }
 
 .footer ul {
@@ -115,6 +137,7 @@
 
 .footer ul li {
   font-size: 0.8rem;
+  color: #ffffff;
 }
 
 @media (min-width: 1025px) {
@@ -134,6 +157,14 @@
 
   :deep(.el-button) {
     background-color: black;
+  }
+
+  .footer {
+    background-color: rgb(253, 249, 243);
+  }
+
+  .footer ul li {
+    color: black;
   }
 }
 </style>
