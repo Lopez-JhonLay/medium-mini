@@ -1,7 +1,7 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import HomeView from '../views/HomeView.vue';
 
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,8 +17,14 @@ const router = createRouter({
       component: () => import('../views/DashboardView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/write-blog-post',
+      name: 'write-blog-post',
+      component: () => import('../views/BlogEditorView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
   if (
@@ -27,12 +33,12 @@ router.beforeEach((to, from, next) => {
     !useAuthStore().token &&
     !useAuthStore().isAuthenticated
   ) {
-    next('/')
+    next('/');
   } else if (to.name === 'home' && useAuthStore().isAuthenticated) {
-    next({ name: 'dashboard' })
+    next({ name: 'dashboard' });
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

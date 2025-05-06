@@ -5,7 +5,9 @@
         <h2>Medium<sup>mini</sup></h2>
         <div class="features">
           <el-icon :size="20"><Search /></el-icon>
-          <el-icon :size="20"><Edit /></el-icon>
+          <router-link to="/write-blog-post">
+            <el-icon :size="20"><Edit /></el-icon>
+          </router-link>
           <el-popover ref="popover" placement="bottom-end" :width="200" trigger="click">
             <div class="popover-content">
               <el-button
@@ -45,18 +47,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref } from 'vue';
 
-import { Eleme } from '@element-plus/icons-vue'
+import { Eleme } from '@element-plus/icons-vue';
 
-import PostItem from '@/components/PostItem.vue'
+import PostItem from '@/components/PostItem.vue';
 
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth';
 
-import userImage from '../assets/user-img.jpg'
+import userImage from '../assets/user-img.jpg';
 
-const visible = ref(false)
-const activeTab = ref('for-you')
+const visible = ref(false);
+const activeTab = ref('for-you');
 </script>
 
 <style scoped>
@@ -91,5 +93,9 @@ const activeTab = ref('for-you')
   border: 2px solid red;
   margin: 0 auto;
   padding-inline: 0.8rem;
+}
+
+a {
+  color: black;
 }
 </style>

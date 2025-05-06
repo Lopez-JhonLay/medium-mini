@@ -1,18 +1,18 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 
-import type { User } from '@/models'
+import type { User } from '@/models';
 
-import router from '@/router'
+import router from '@/router';
 
 export const useAuthStore = defineStore('auth', {
   state: (): {
-    users: User[] | null
-    user: User | null
-    token: string | null
-    isAuthenticated: boolean
-    isLoading: boolean
+    users: User[] | null;
+    user: User | null;
+    token: string | null;
+    isAuthenticated: boolean;
+    isLoading: boolean;
   } => ({
     users: [],
     user: null,
@@ -23,88 +23,90 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async signup(data: User): Promise<boolean> {
       try {
-        this.isLoading = true
+        this.isLoading = true;
 
         if (this.users?.some((u: User) => u.email === data.email)) {
-          throw new Error('Email already used')
+          throw new Error('Email already used');
         }
 
         const newUser: User = {
           id: data.id,
           email: data.email,
           password: data.password,
-        }
+        };
 
-        this.users?.push(newUser)
+        this.users?.push(newUser);
 
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        console.log('Sign up successful. Please login to your account :>')
+        console.log('Sign up successful. Please login to your account :>');
 
-        return true
+        return true;
       } catch (error) {
         if (error) {
-          throw new Error(error as string)
+          throw new Error(error as string);
         }
-        return false
+        return false;
       } finally {
-        this.isLoading = false
-        console.log(this.isLoading)
+        this.isLoading = false;
+        console.log(this.isLoading);
       }
     },
+
     async login(data: Omit<User, 'id'>): Promise<boolean> {
       try {
-        this.isLoading = true
+        this.isLoading = true;
 
-        const user = this.users?.find((user: User) => user.email === data.email)
+        const user = this.users?.find((user: User) => user.email === data.email);
 
         if (!user) {
-          throw new Error('User not found')
+          throw new Error('User not found');
         }
 
         if (user.password !== data.password) {
-          throw new Error('Incorrect Password')
+          throw new Error('Incorrect Password');
         }
 
-        const generatedToken: string = uuidv4()
+        const generatedToken: string = uuidv4();
 
-        this.user = user
-        this.token = generatedToken
-        this.isAuthenticated = true
+        this.user = user;
+        this.token = generatedToken;
+        this.isAuthenticated = true;
 
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        console.log('Login successful')
+        console.log('Login successful');
 
-        return true
+        return true;
       } catch (error) {
         if (error) {
-          throw new Error(error as string)
+          throw new Error(error as string);
         }
-        return false
+        return false;
       } finally {
-        this.isLoading = false
-        console.log(this.isLoading)
+        this.isLoading = false;
+        console.log(this.isLoading);
 
-        router.push('/dashboard')
+        router.push('/dashboard');
       }
     },
+
     async logout() {
-      this.isLoading = true
+      this.isLoading = true;
 
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      this.isAuthenticated = false
-      this.user = null
-      this.token = null
+      this.isAuthenticated = false;
+      this.user = null;
+      this.token = null;
 
-      console.log('Logout successful')
+      console.log('Logout successful');
 
-      this.isLoading = false
+      this.isLoading = false;
 
-      console.log(this.isLoading)
+      console.log(this.isLoading);
 
-      router.push('/')
+      router.push('/');
     },
   },
-})
+});

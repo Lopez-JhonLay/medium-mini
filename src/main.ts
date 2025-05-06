@@ -1,43 +1,56 @@
-import './assets/main.css'
+import './assets/main.css';
 
-import { createApp, watch } from 'vue'
+import { createApp, watch } from 'vue';
 
-import { createPinia } from 'pinia'
+import { createPinia } from 'pinia';
 
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 
-import App from './App.vue'
+import App from './App.vue';
 
-import router from './router'
+import router from './router';
 
-import { useAuthStore } from './stores/auth'
+import { useAuthStore } from './stores/auth';
+import { useBlogStore } from './stores/blog';
 
-const app = createApp(App)
+const app = createApp(App);
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-  app.component(key, component)
+  app.component(key, component);
 }
 
-app.use(createPinia())
-app.use(router)
-app.use(ElementPlus)
+app.use(createPinia());
+app.use(router);
+app.use(ElementPlus);
 
-const store = useAuthStore()
+const [authStore, blogStore] = [useAuthStore(), useBlogStore()];
 
-const savedState = localStorage.getItem('users')
+const [authSavedState, blogSaveState] = [
+  localStorage.getItem('users'),
+  localStorage.getItem('blogs'),
+];
 
-if (savedState) {
-  store.$patch(JSON.parse(savedState))
+if (authSavedState && blogSaveState) {
+  authStore.$patch(JSON.parse(authSavedState));
+  blogStore.$patch(JSON.parse(blogSaveState));
 }
 
 watch(
-  () => store.$state,
+  () => authStore.$state,
   (state) => {
-    localStorage.setItem('users', JSON.stringify(state))
+    localStorage.setItem('users', JSON.stringify(state));
   },
   { deep: true },
-)
+);
 
-app.mount('#app')
+watch(
+  () => blogStore.$state,
+  (state) => {
+    localStorage.setItem('blogs', JSON.stringify(state));
+  },
+  { deep: true },
+);
+
+app.mount('#app');
