@@ -13,8 +13,8 @@
               <el-button
                 type="danger"
                 :loading-icon="Eleme"
-                :loading="useAuthStore().isLoading"
-                @click="useAuthStore().logout()"
+                :loading="authStore.isLoading"
+                @click="authStore.logout()"
                 >Logout</el-button
               >
             </div>
@@ -35,11 +35,7 @@
     <el-main>
       <el-tabs v-model="activeTab">
         <el-tab-pane label="For you" name="for-you">
-          <PostItem />
-          <PostItem />
-          <PostItem />
-          <PostItem />
-          <PostItem />
+          <BlogItem v-for="blog in blogs" :key="blog.id" :blog="blog" />
         </el-tab-pane>
       </el-tabs>
     </el-main>
@@ -51,11 +47,19 @@ import { ref } from 'vue';
 
 import { Eleme } from '@element-plus/icons-vue';
 
-import PostItem from '@/components/PostItem.vue';
+import BlogItem from '@/components/BlogItem.vue';
+
+import { storeToRefs } from 'pinia';
 
 import { useAuthStore } from '@/stores/auth';
+import { useBlogStore } from '@/stores/blog';
 
 import userImage from '../assets/user-img.jpg';
+
+const authStore = useAuthStore();
+const blogStore = useBlogStore();
+
+const { blogs } = storeToRefs(blogStore);
 
 const visible = ref(false);
 const activeTab = ref('for-you');

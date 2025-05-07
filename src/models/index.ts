@@ -4,10 +4,13 @@ export type User = {
   password: string;
 };
 
-export type Blog = {
+export type Blog = BlogForm & {
   id: string;
-  title: string;
-  content: string;
   authorId: string;
   createdAt: string;
+};
+
+export type BlogForm = {
+  title: string;
+  content: string;
 };

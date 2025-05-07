@@ -3,17 +3,17 @@
     <template #header>
       <div class="card-header" style="border: none">
         <el-image :src="authorImg" fit="fill" class="author-img" />
-        <span class="name">John Doe</span>
+        <span class="name">{{ authStore.user?.email }}</span>
       </div>
     </template>
     <h3 class="blog-title">
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit.
-      <p class="blog-content">Lorem ipsum dolor sit amet consectetur, adipisicing elit...</p>
+      {{ props.blog.title }}
+      <p class="blog-content">{{ previewContent }}</p>
     </h3>
     <el-image :src="blogImg" fit="contain" class="blog-img" />
     <template #footer>
       <div class="card-footer">
-        <el-text>2d ago</el-text>
+        <el-text>{{ blog.createdAt }}</el-text>
       </div>
     </template>
   </el-card>
@@ -23,8 +23,28 @@
 </template>
 
 <script setup lang="ts">
-import authorImg from '../assets/user-img.jpg'
-import blogImg from '../assets/sample-img.jpg'
+import { computed } from 'vue';
+
+import { useAuthStore } from '@/stores/auth';
+
+import authorImg from '../assets/user-img.jpg';
+import blogImg from '../assets/sample-img.jpg';
+
+import type { Blog } from '@/models';
+
+const props = defineProps<{
+  blog: Blog;
+}>();
+
+const authStore = useAuthStore();
+
+const previewContent = computed(() => {
+  const plainText = props.blog.content.replace(/<[^>]*>/g, ' ');
+  const words = plainText.trim().split(/\s+/);
+  const isTruncated = words.length > 20;
+  const shortText = words.slice(0, 20).join(' ');
+  return isTruncated ? shortText + '...' : shortText;
+});
 </script>
 
 <style scoped>

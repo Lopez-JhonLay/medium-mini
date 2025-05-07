@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 
 import type { Blog } from '@/models';
 
+import { useAuthStore } from './auth';
+
 export const useBlogStore = defineStore('blog', {
   state: (): {
     blogs: Blog[] | null;
@@ -10,6 +12,13 @@ export const useBlogStore = defineStore('blog', {
     blogs: [],
     isLoading: false,
   }),
+  getters: {
+    blogsByOthers: (state) => {
+      const authStore = useAuthStore();
+
+      return state.blogs?.filter((blog) => blog.authorId !== authStore.user?.id);
+    },
+  },
   actions: {
     async saveBlog(data: Blog): Promise<boolean> {
       try {

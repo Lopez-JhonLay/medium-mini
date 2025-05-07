@@ -1,21 +1,13 @@
 <template>
   <div class="blog-post-form-container">
-    <el-form :model="blogPostForm" label-width="80px" ref="blogPostFormRef">
-      <el-form-item
-        label="Title"
-        prop="title"
-        :rules="[{ required: true, message: 'Title is required' }]"
-      >
+    <el-form :model="blogPostForm" label-width="80px" ref="blogPostFormRef" :rules="blogFormRules">
+      <el-form-item label="Title" prop="title">
         <el-input v-model="blogPostForm.title" placeholder="Enter title" />
       </el-form-item>
-      <el-form-item
-        label="Content"
-        prop="content"
-        :rules="[{ required: true, message: 'Content is required' }]"
-      >
+      <el-form-item label="Content" prop="content">
         <QuillEditor
           v-model:content="blogPostForm.content"
-          content-type="delta"
+          content-type="html"
           ref="quillRef"
           theme="snow"
           placeholder="Write here..."
@@ -39,7 +31,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 
-import { ElForm } from 'element-plus';
+import { ElForm, type FormRules } from 'element-plus';
 import { Eleme } from '@element-plus/icons-vue';
 
 import { QuillEditor } from '@vueup/vue-quill';
@@ -49,6 +41,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useAuthStore } from '@/stores/auth';
 import { useBlogStore } from '@/stores/blog';
+import type { Blog, BlogForm } from '@/models';
 
 const authStore = useAuthStore();
 const blogStore = useBlogStore();
@@ -59,9 +52,33 @@ const blogPostFormRef = ref<InstanceType<typeof ElForm> | null>(null);
 
 const quillRef = ref<InstanceType<typeof QuillEditor> | null>(null);
 
-const blogPostForm = reactive({
+const blogPostForm = reactive<BlogForm>({
   title: '',
   content: '',
+});
+
+const validateTitle = (rule: object, value: string, callback: (error?: Error) => void) => {
+  if (value === '') {
+    callback(new Error('Please input the title'));
+  } else {
+    callback();
+  }
+};
+
+const validateContent = (rule: object, value: string, callback: (error?: Error) => void) => {
+  const wordCount = value?.trim().split(/\s+/).filter(Boolean).length;
+  if (value === '') {
+    callback(new Error('Please input the content'));
+  } else if (wordCount < 20) {
+    callback(new Error('Content must be at least 20 words.'));
+  } else {
+    callback();
+  }
+};
+
+const blogFormRules = reactive<FormRules<typeof blogPostForm>>({
+  title: [{ validator: validateTitle, trigger: 'blur' }],
+  content: [{ validator: validateContent, trigger: 'blur' }],
 });
 
 const validateBlogPostForm = async () => {
@@ -87,12 +104,16 @@ const handleSubmit = async () => {
   if (!user) return;
 
   try {
-    const isSuccess = await blogStore.saveBlog({
+    const now = new Date().toISOString();
+
+    const fullBlog: Blog = {
+      ...blogPostForm,
       id: uuidv4(),
       authorId: user.id,
-      createdAt: new Date().toISOString(),
-      ...blogPostForm,
-    });
+      createdAt: now,
+    };
+
+    const isSuccess = await blogStore.saveBlog(fullBlog);
 
     if (!isSuccess) return;
 
