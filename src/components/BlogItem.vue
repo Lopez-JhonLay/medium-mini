@@ -1,16 +1,28 @@
 <template>
-  <el-card style="max-width: 480px; border: none" shadow="never">
+  <el-card shadow="never" class="blog-card">
     <template #header>
       <div class="card-header" style="border: none">
         <el-image :src="authorImg" fit="fill" class="author-img" />
-        <span class="name">{{ authStore.user?.email }}</span>
+        <span class="name">{{ author }}</span>
       </div>
     </template>
-    <h3 class="blog-title">
-      {{ props.blog.title }}
-      <p class="blog-content">{{ previewContent }}</p>
-    </h3>
-    <el-image :src="blogImg" fit="contain" class="blog-img" />
+    <el-row>
+      <el-col :xs="24" :sm="16" :md="16">
+        <h3 class="blog-title">
+          {{ props.blog.title }}
+          <p class="blog-content">{{ previewContent }}</p>
+        </h3>
+        <div class="tags-container">
+          <el-tag v-for="tag in blog.tags" :key="tag" type="success" :disable-transitions="false">
+            {{ tag }}
+          </el-tag>
+        </div>
+      </el-col>
+
+      <el-col :xs="24" :sm="8" :md="8">
+        <el-image :src="blogImg" fit="contain" class="blog-img" />
+      </el-col>
+    </el-row>
     <template #footer>
       <div class="card-footer">
         <el-text>{{ blog.createdAt }}</el-text>
@@ -38,6 +50,10 @@ const props = defineProps<{
 
 const authStore = useAuthStore();
 
+const author = authStore.users
+  ?.filter((user) => user.id === props.blog.authorId)
+  .map((author) => author.email)[0];
+
 const previewContent = computed(() => {
   const plainText = props.blog.content.replace(/<[^>]*>/g, ' ');
   const words = plainText.trim().split(/\s+/);
@@ -48,6 +64,11 @@ const previewContent = computed(() => {
 </script>
 
 <style scoped>
+.blog-card {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+}
 :deep(.el-card__header),
 :deep(.el-card__footer) {
   border: none;
@@ -60,6 +81,12 @@ const previewContent = computed(() => {
   align-items: start;
   gap: 0.8rem;
   margin-bottom: 10px;
+}
+
+.tags-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-block: 1rem;
 }
 
 .card-header {
@@ -82,8 +109,7 @@ const previewContent = computed(() => {
 }
 
 .blog-img {
-  max-width: 120px;
-  max-height: 120px;
   border-radius: 4px;
+  margin-block: 1rem;
 }
 </style>

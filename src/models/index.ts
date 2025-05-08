@@ -13,4 +13,5 @@ export type Blog = BlogForm & {
 export type BlogForm = {
   title: string;
   content: string;
+  tags: string[];
 };

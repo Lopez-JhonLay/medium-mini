@@ -33,11 +33,22 @@
     </el-container>
     <el-divider></el-divider>
     <el-main>
-      <el-tabs v-model="activeTab">
-        <el-tab-pane label="For you" name="for-you">
-          <BlogItem v-for="blog in blogs" :key="blog.id" :blog="blog" />
-        </el-tab-pane>
-      </el-tabs>
+      <div class="row-wrapper">
+        <el-row justify="center" :gutter="20">
+          <el-col :xs="24" :sm="24" :md="16" :lg="16">
+            <div class="box">
+              <el-tabs v-model="activeTab">
+                <el-tab-pane label="For you" name="for-you">
+                  <BlogItem v-for="blog in blogsByOthers" :key="blog.id" :blog="blog" />
+                </el-tab-pane>
+              </el-tabs>
+            </div>
+          </el-col>
+          <el-col :md="8" :lg="8" class="hidden-sm-and-down">
+            <div class="box">Right Column</div>
+          </el-col>
+        </el-row>
+      </div>
     </el-main>
   </div>
 </template>
@@ -59,7 +70,7 @@ import userImage from '../assets/user-img.jpg';
 const authStore = useAuthStore();
 const blogStore = useBlogStore();
 
-const { blogs } = storeToRefs(blogStore);
+const { blogsByOthers } = storeToRefs(blogStore);
 
 const visible = ref(false);
 const activeTab = ref('for-you');
@@ -91,15 +102,21 @@ const activeTab = ref('for-you');
   margin: 0;
 }
 
-:deep(.el-main) {
-  width: 100%;
+.row-wrapper {
   max-width: 1440px;
-  border: 2px solid red;
   margin: 0 auto;
-  padding-inline: 0.8rem;
+}
+
+:deep(.el-tabs) {
+  width: 100%;
+  max-width: fit-content;
 }
 
 a {
   color: black;
+}
+
+.box {
+  padding: 20px;
 }
 </style>

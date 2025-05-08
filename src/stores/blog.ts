@@ -30,6 +30,7 @@ export const useBlogStore = defineStore('blog', {
           content: data.content,
           authorId: data.authorId,
           createdAt: data.createdAt,
+          tags: data.tags,
         };
 
         this.blogs?.push(newBlog);

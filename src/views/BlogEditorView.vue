@@ -1,6 +1,12 @@
 <template>
   <div class="blog-post-form-container">
-    <el-form :model="blogPostForm" label-width="80px" ref="blogPostFormRef" :rules="blogFormRules">
+    <el-form
+      :model="blogPostForm"
+      label-width="80px"
+      ref="blogPostFormRef"
+      :rules="blogFormRules"
+      label-position="top"
+    >
       <el-form-item label="Title" prop="title">
         <el-input v-model="blogPostForm.title" placeholder="Enter title" />
       </el-form-item>
@@ -13,6 +19,33 @@
           placeholder="Write here..."
           class="quill-editor"
         />
+      </el-form-item>
+
+      <el-form-item label="Tags" prop="tags">
+        <div class="tags">
+          <el-tag
+            v-for="tag in blogPostForm.tags"
+            :key="tag"
+            type="success"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)"
+          >
+            {{ tag }}
+          </el-tag>
+          <el-input
+            v-if="inputTagVisible"
+            ref="InputRef"
+            v-model="inputTagValue"
+            class="w-20"
+            size="small"
+            @keyup.enter="handleInputConfirm"
+            @blur="handleInputConfirm"
+          />
+          <el-button v-else class="button-new-tag" size="small" @click="showInput">
+            + New Tag
+          </el-button>
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -29,9 +62,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive, ref, nextTick } from 'vue';
 
 import { ElForm, type FormRules } from 'element-plus';
+import type { InputInstance } from 'element-plus';
 import { Eleme } from '@element-plus/icons-vue';
 
 import { QuillEditor } from '@vueup/vue-quill';
@@ -55,7 +89,31 @@ const quillRef = ref<InstanceType<typeof QuillEditor> | null>(null);
 const blogPostForm = reactive<BlogForm>({
   title: '',
   content: '',
+  tags: ['Technology', 'Science', 'Life'],
 });
+
+const inputTagValue = ref('');
+const inputTagVisible = ref(false);
+const InputRef = ref<InputInstance>();
+
+const handleClose = (tag: string) => {
+  blogPostForm.tags.splice(blogPostForm.tags.indexOf(tag), 1);
+};
+
+const showInput = () => {
+  inputTagVisible.value = true;
+  nextTick(() => {
+    InputRef.value!.input!.focus();
+  });
+};
+
+const handleInputConfirm = () => {
+  if (inputTagValue.value) {
+    blogPostForm.tags.push(inputTagValue.value);
+  }
+  inputTagVisible.value = false;
+  inputTagValue.value = '';
+};
 
 const validateTitle = (rule: object, value: string, callback: (error?: Error) => void) => {
   if (value === '') {
@@ -76,9 +134,18 @@ const validateContent = (rule: object, value: string, callback: (error?: Error) 
   }
 };
 
+const validateTags = (rule: object, value: string, callback: (error?: Error) => void) => {
+  if (!value.length) {
+    callback(new Error('Please input atleast 1 tag'));
+  } else {
+    callback();
+  }
+};
+
 const blogFormRules = reactive<FormRules<typeof blogPostForm>>({
-  title: [{ validator: validateTitle, trigger: 'blur' }],
-  content: [{ validator: validateContent, trigger: 'blur' }],
+  title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+  content: [{ required: true, validator: validateContent, trigger: 'blur' }],
+  tags: [{ required: true, validator: validateTags, trigger: 'blur' }],
 });
 
 const validateBlogPostForm = async () => {
@@ -134,7 +201,13 @@ const resetForm = () => {
 
 <style scoped>
 .blog-post-form-container {
-  padding: 2rem;
+  padding: 1rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 :deep(.el-form) {
