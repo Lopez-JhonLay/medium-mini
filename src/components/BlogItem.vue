@@ -20,7 +20,7 @@
       </el-col>
 
       <el-col :xs="24" :sm="8" :md="8">
-        <el-image :src="blogImg" fit="contain" class="blog-img" />
+        <el-image :src="blog.img_url" fit="contain" class="blog-img" />
       </el-col>
     </el-row>
     <template #footer>
@@ -40,7 +40,7 @@ import { computed } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
 import authorImg from '../assets/user-img.jpg';
-import blogImg from '../assets/sample-img.jpg';
+// import blogImg from '../assets/sample-img.jpg';
 
 import type { Blog } from '@/models';
 

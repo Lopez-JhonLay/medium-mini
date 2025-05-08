@@ -10,6 +10,20 @@
       <el-form-item label="Title" prop="title">
         <el-input v-model="blogPostForm.title" placeholder="Enter title" />
       </el-form-item>
+      <el-form-item prop="img_url">
+        <template #label>
+          Image Link
+          <el-popover placement="bottom" title="Image Preview" :width="200" trigger="click">
+            <img :src="blogPostForm.img_url" alt="Preview" style="width: 100%" />
+            <template #reference>
+              <el-button :disabled="!blogPostForm.img_url" type="text" size="small"
+                >(Preview here.)</el-button
+              >
+            </template>
+          </el-popover>
+        </template>
+        <el-input v-model="blogPostForm.img_url" placeholder="Enter image link" />
+      </el-form-item>
       <el-form-item label="Content" prop="content">
         <QuillEditor
           v-model:content="blogPostForm.content"
@@ -90,6 +104,7 @@ const blogPostForm = reactive<BlogForm>({
   title: '',
   content: '',
   tags: ['Technology', 'Science', 'Life'],
+  img_url: '',
 });
 
 const inputTagValue = ref('');
@@ -123,6 +138,14 @@ const validateTitle = (rule: object, value: string, callback: (error?: Error) =>
   }
 };
 
+const validateImgUrl = (rule: object, value: string, callback: (error?: Error) => void) => {
+  if (value === '') {
+    callback(new Error('Please input the image link'));
+  } else {
+    callback();
+  }
+};
+
 const validateContent = (rule: object, value: string, callback: (error?: Error) => void) => {
   const wordCount = value?.trim().split(/\s+/).filter(Boolean).length;
   if (value === '') {
@@ -144,6 +167,7 @@ const validateTags = (rule: object, value: string, callback: (error?: Error) => 
 
 const blogFormRules = reactive<FormRules<typeof blogPostForm>>({
   title: [{ required: true, validator: validateTitle, trigger: 'blur' }],
+  img_url: [{ required: true, validator: validateImgUrl, trigger: 'blur' }],
   content: [{ required: true, validator: validateContent, trigger: 'blur' }],
   tags: [{ required: true, validator: validateTags, trigger: 'blur' }],
 });
@@ -201,7 +225,11 @@ const resetForm = () => {
 
 <style scoped>
 .blog-post-form-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 1rem;
+  /* border: 2px solid red; */
 }
 
 .tags {

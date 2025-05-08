@@ -27,6 +27,7 @@ export const useBlogStore = defineStore('blog', {
         const newBlog: Blog = {
           id: data.id,
           title: data.title,
+          img_url: data.img_url,
           content: data.content,
           authorId: data.authorId,
           createdAt: data.createdAt,
