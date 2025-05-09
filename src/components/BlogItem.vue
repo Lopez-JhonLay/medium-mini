@@ -25,7 +25,7 @@
     </el-row>
     <template #footer>
       <div class="card-footer">
-        <el-text>{{ blog.createdAt }}</el-text>
+        <el-text>{{ formattedDate }}</el-text>
       </div>
     </template>
   </el-card>
@@ -39,10 +39,11 @@ import { computed } from 'vue';
 
 import { useAuthStore } from '@/stores/auth';
 
-import authorImg from '../assets/user-img.jpg';
-// import blogImg from '../assets/sample-img.jpg';
-
 import type { Blog } from '@/models';
+
+import dayjs from 'dayjs';
+
+import authorImg from '../assets/user-img.jpg';
 
 const props = defineProps<{
   blog: Blog;
@@ -61,6 +62,8 @@ const previewContent = computed(() => {
   const shortText = words.slice(0, 20).join(' ');
   return isTruncated ? shortText + '...' : shortText;
 });
+
+const formattedDate = dayjs(props.blog.createdAt).format('MMMM D, YYYY h:mm A');
 </script>
 
 <style scoped>

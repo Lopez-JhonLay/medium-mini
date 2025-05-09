@@ -92,6 +92,10 @@ const activeTab = ref('for-you');
   font-weight: normal;
 }
 
+:deep(.el-button) {
+  width: 100%;
+}
+
 .features {
   display: flex;
   align-items: center;

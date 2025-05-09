@@ -62,14 +62,19 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button
-          :loading-icon="Eleme"
-          :loading="blogStore.isLoading"
-          type="primary"
-          class="create-post-btn"
-          @click="handleSubmit"
-          >Publish</el-button
-        >
+        <div class="button-container">
+          <el-button type="danger" class="cancel-post-btn" @click="cancelPost()">
+            Cancel
+          </el-button>
+          <el-button
+            :loading-icon="Eleme"
+            :loading="blogStore.isLoading"
+            type="primary"
+            class="create-post-btn"
+            @click="handleSubmit"
+            >Publish</el-button
+          >
+        </div>
       </el-form-item>
     </el-form>
   </div>
@@ -90,6 +95,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/stores/auth';
 import { useBlogStore } from '@/stores/blog';
 import type { Blog, BlogForm } from '@/models';
+
+import router from '@/router';
 
 const authStore = useAuthStore();
 const blogStore = useBlogStore();
@@ -221,6 +228,10 @@ const resetForm = () => {
   // Ensure Quill's editor visually resets
   quillRef.value?.getQuill()?.setText('');
 };
+
+const cancelPost = () => {
+  router.push('/dashboard');
+};
 </script>
 
 <style scoped>
@@ -229,13 +240,18 @@ const resetForm = () => {
   max-width: 1200px;
   margin: 0 auto;
   padding: 1rem;
-  /* border: 2px solid red; */
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+}
+
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: end;
 }
 
 :deep(.el-form) {
