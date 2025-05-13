@@ -1,5 +1,5 @@
 <template>
-  <el-card shadow="never" class="blog-card">
+  <el-card shadow="never" class="blog-card" @click="goToBlogPost(props.blog.id)">
     <template #header>
       <div class="card-header" style="border: none">
         <el-image :src="authorImg" fit="fill" class="author-img" />
@@ -41,6 +41,8 @@ import { useAuthStore } from '@/stores/auth';
 
 import type { Blog } from '@/models';
 
+import router from '@/router';
+
 import dayjs from 'dayjs';
 
 import authorImg from '../assets/user-img.jpg';
@@ -64,6 +66,10 @@ const previewContent = computed(() => {
 });
 
 const formattedDate = dayjs(props.blog.createdAt).format('MMMM D, YYYY h:mm A');
+
+const goToBlogPost = (blogPostId: string) => {
+  router.push(`/read-blog-post/${blogPostId}`);
+};
 </script>
 
 <style scoped>
@@ -71,7 +77,13 @@ const formattedDate = dayjs(props.blog.createdAt).format('MMMM D, YYYY h:mm A');
   max-width: 800px;
   margin: 0 auto;
   padding: 1rem;
+  cursor: pointer;
 }
+
+.blog-card:hover {
+  background-color: rgb(230, 227, 227);
+}
+
 :deep(.el-card__header),
 :deep(.el-card__footer) {
   border: none;
@@ -88,6 +100,7 @@ const formattedDate = dayjs(props.blog.createdAt).format('MMMM D, YYYY h:mm A');
 
 .tags-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-block: 1rem;
 }

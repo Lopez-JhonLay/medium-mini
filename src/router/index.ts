@@ -23,6 +23,12 @@ const router = createRouter({
       component: () => import('../views/BlogEditorView.vue'),
       meta: { requiresAuth: true },
     },
+    {
+      path: '/read-blog-post/:postId',
+      name: 'read-blog-post',
+      component: () => import('../views/BlogPostView.vue'),
+      meta: { requiresAuth: true },
+    },
   ],
 });
 

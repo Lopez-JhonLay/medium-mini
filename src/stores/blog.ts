@@ -13,13 +13,17 @@ export const useBlogStore = defineStore('blog', {
     isLoading: false,
   }),
   getters: {
-    blogsByOthers: (state) => {
+    getBlogsByOthers: (state) => {
       const authStore = useAuthStore();
 
       return state.blogs?.filter((blog) => blog.authorId !== authStore.user?.id);
     },
   },
   actions: {
+    getBlogById(postId: string) {
+      return this.blogs?.find((blog) => blog.id === postId);
+    },
+
     async saveBlog(data: Blog): Promise<boolean> {
       try {
         this.isLoading = true;
